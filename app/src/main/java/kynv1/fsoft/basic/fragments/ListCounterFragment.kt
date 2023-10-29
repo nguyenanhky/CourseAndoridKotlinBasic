@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.DOWN
@@ -14,10 +13,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.UP
 import androidx.recyclerview.widget.RecyclerView
 import kynv1.fsoft.basic.NavigationInterface
 import kynv1.fsoft.basic.databinding.CountersFragmentBinding
-import kynv1.fsoft.basic.model.Counter
 import kynv1.fsoft.basic.model.DataImplement
-import kynv1.fsoft.basic.model.ONE_DAY_MILLS
-import kynv1.fsoft.basic.model.currentTime
 import kynv1.fsoft.basic.utils.Logger
 
 class ListCounterFragment : Fragment() {
@@ -79,6 +75,9 @@ class ListCounterFragment : Fragment() {
 
         binding.recycler.adapter = adapter
         adapter.updateList(DataImplement.instance.items)
+        DataImplement.instance.neeUpdate =  {
+            adapter.updateList(DataImplement.instance.items)
+        }
         itemTouchHelper.attachToRecyclerView(binding.recycler)
 
         binding.newCounter.setOnClickListener {

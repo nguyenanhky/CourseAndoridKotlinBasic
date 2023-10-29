@@ -1,8 +1,6 @@
 package kynv1.fsoft.basic.fragments
 
 import android.os.Bundle
-import android.view.ContextMenu
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,8 +8,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import kynv1.fsoft.basic.R
 import kynv1.fsoft.basic.databinding.CounterFragmentBinding
+import kynv1.fsoft.basic.model.Counter
+import kynv1.fsoft.basic.model.DataImplement
 
 class CounterFragment : Fragment() {
 
@@ -49,13 +50,15 @@ class CounterFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.counter_menu,menu)
-
+        inflater.inflate(R.menu.counter_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId==R.id.actionSave){
-            Toast.makeText(requireContext(),"Save action",Toast.LENGTH_SHORT).show()
+        if (item.itemId == R.id.actionSave) {
+            Toast.makeText(requireContext(), "Save action", Toast.LENGTH_SHORT).show()
+            val counter = Counter(value = value, dateInMillis = System.currentTimeMillis())
+            DataImplement.instance.addOrUpdateItem(counter)
+            activity?.onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
