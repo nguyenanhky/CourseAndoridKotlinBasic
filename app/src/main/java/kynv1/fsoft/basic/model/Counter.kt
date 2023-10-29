@@ -1,7 +1,7 @@
 package kynv1.fsoft.basic.model
 
+import kynv1.fsoft.basic.utils.Logger
 import java.util.UUID
-import kotlin.time.ExperimentalTime
 
 
 data class Counter(
@@ -14,6 +14,7 @@ data class Counter(
     }
 
     fun isTheSameContent(other: Any?): Boolean {
+        Logger.lod("${other is Counter && other.id == id && other.value ==value}")
         return other is Counter && other.id == id && other.value ==value
     }
 }

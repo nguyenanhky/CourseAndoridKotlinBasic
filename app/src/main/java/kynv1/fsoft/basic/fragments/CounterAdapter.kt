@@ -18,7 +18,6 @@ class CounterAdapter(val callback: (id: String) -> Unit) :
         val result = DiffUtil.calculateDiff(CounterDiffUtil(counters,data))
         counters.clear()
         counters.addAll(data)
-       // notifyDataSetChanged()
         result.dispatchUpdatesTo(this)
     }
 
