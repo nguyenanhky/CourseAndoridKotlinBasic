@@ -14,14 +14,9 @@ data class Counter(
     }
 
     fun isTheSameContent(other: Any?): Boolean {
-        return other is Counter && other.id == id && other.value == other.value
+        return other is Counter && other.id == id && other.value ==value
     }
 }
-// fetData
-private val currentTime by lazy { System.currentTimeMillis() }
-private const val ONE_DAY_MILLS = 86_400_000
 
-@ExperimentalTime
-fun generateFakeData() = (0..10).toList().map {
-    Counter(value = it, dateInMillis = currentTime-it* ONE_DAY_MILLS)
-}.toList()
+internal val currentTime by lazy { System.currentTimeMillis() }
+internal const val ONE_DAY_MILLS = 86_400_000

@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kynv1.fsoft.basic.databinding.ItemBinding
 import kynv1.fsoft.basic.model.Counter
@@ -14,9 +15,11 @@ class CounterAdapter(val callback: (id: String) -> Unit) :
     private val counters: MutableList<Counter> = mutableListOf()
 
     fun updateList(data: List<Counter>) {
+        val result = DiffUtil.calculateDiff(CounterDiffUtil(counters,data))
         counters.clear()
         counters.addAll(data)
-        notifyDataSetChanged()
+       // notifyDataSetChanged()
+        result.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CounterHolder {

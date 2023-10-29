@@ -7,15 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.*
+import androidx.recyclerview.widget.ItemTouchHelper.DOWN
+import androidx.recyclerview.widget.ItemTouchHelper.END
+import androidx.recyclerview.widget.ItemTouchHelper.START
+import androidx.recyclerview.widget.ItemTouchHelper.UP
 import androidx.recyclerview.widget.RecyclerView
 import kynv1.fsoft.basic.NavigationInterface
 import kynv1.fsoft.basic.databinding.CountersFragmentBinding
-import kynv1.fsoft.basic.model.generateFakeData
+import kynv1.fsoft.basic.model.Counter
+import kynv1.fsoft.basic.model.DataImplement
+import kynv1.fsoft.basic.model.ONE_DAY_MILLS
+import kynv1.fsoft.basic.model.currentTime
 import kynv1.fsoft.basic.utils.Logger
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 class ListCounterFragment : Fragment() {
     private var _binding: CountersFragmentBinding? = null
     val binding
@@ -27,7 +31,13 @@ class ListCounterFragment : Fragment() {
 
     private val adapter by lazy {
         CounterAdapter {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            onItemClick(it)
+        }
+    }
+    private val onItemClick:(id:String)->Unit = {id->
+        DataImplement.instance.items.firstOrNull{it.id==id}?.let {item->
+            DataImplement.instance.addOrUpdateItem(item.copy(value = item.value+3))
+            adapter.updateList(DataImplement.instance.items)
         }
     }
     private val itemTouchHelper by lazy {
@@ -42,8 +52,8 @@ class ListCounterFragment : Fragment() {
                     val adapter = recyclerView.adapter as CounterAdapter
                     val from = viewHolder.adapterPosition
                     val to = target.adapterPosition
-                    adapter.moveItem(from,to)
-                    adapter.notifyMoveItem(from,to)
+                    adapter.moveItem(from, to)
+                    adapter.notifyMoveItem(from, to)
                     return true
                 }
 
@@ -68,10 +78,18 @@ class ListCounterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recycler.adapter = adapter
-        adapter.updateList(generateFakeData())
+        adapter.updateList(DataImplement.instance.items)
         itemTouchHelper.attachToRecyclerView(binding.recycler)
+
         binding.newCounter.setOnClickListener {
-            navigationController?.navigateTo(CounterFragment.newInstance())
+            val size = DataImplement.instance.items.size
+            DataImplement.instance.addOrUpdateItem(
+                Counter(
+                    value = size * 10 + 1,
+                    dateInMillis = currentTime - size * ONE_DAY_MILLS
+                )
+            )
+            adapter.updateList(DataImplement.instance.items)
         }
     }
 
