@@ -82,14 +82,7 @@ class ListCounterFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.recycler)
 
         binding.newCounter.setOnClickListener {
-            val size = DataImplement.instance.items.size
-            DataImplement.instance.addOrUpdateItem(
-                Counter(
-                    value = size * 10 + 1,
-                    dateInMillis = currentTime - size * ONE_DAY_MILLS
-                )
-            )
-            adapter.updateList(DataImplement.instance.items)
+            navigationController?.navigateTo(CounterFragment.newInstance())
         }
     }
 
