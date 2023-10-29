@@ -32,7 +32,7 @@ class ListCounterFragment : Fragment() {
     }
     private val itemTouchHelper by lazy {
         val simpleItemTouchCallBack =
-            object : ItemTouchHelper.SimpleCallback(UP or DOWN or START or END, 0) {
+            object : ItemTouchHelper.SimpleCallback(UP or DOWN , 0) {
                 override fun onMove(
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder,

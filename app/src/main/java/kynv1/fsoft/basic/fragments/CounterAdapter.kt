@@ -57,7 +57,7 @@ class CounterAdapter(val callback: (id: String) -> Unit) :
 }
 
 private fun Context.toDate(dataInMillis: Long): CharSequence? {
-    val flags = DateUtils.FORMAT_ABBREV_TIME or DateUtils.FORMAT_SHOW_DATE
+    val flags = DateUtils.FORMAT_SHOW_DATE
     return DateUtils.formatDateTime(this, dataInMillis, flags)
 }
 
