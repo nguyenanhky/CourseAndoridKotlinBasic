@@ -21,17 +21,23 @@ class CounterFragment : Fragment() {
         get() = _binding!!
 
     private var value = 0
+    private var currentCounter: Counter? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        _binding = CounterFragmentBinding.inflate(inflater, container, false);
+        _binding = CounterFragmentBinding.inflate(inflater, container, false).also {
+            arguments?.getString(ID_KEY)?.let { id ->
+                currentCounter = DataImplement.instance.items.firstOrNull { it.id == id }
+            }
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        value = currentCounter?.value ?: 0
         showData()
         setHasOptionsMenu(true)
         binding.plus1.setOnClickListener {
@@ -55,19 +61,38 @@ class CounterFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.actionSave) {
-            Toast.makeText(requireContext(), "Save action", Toast.LENGTH_SHORT).show()
-            val counter = Counter(value = value, dateInMillis = System.currentTimeMillis())
+            val counter = currentCounter?.copy(value = value) ?: Counter(
+                value = value,
+                dateInMillis = System.currentTimeMillis()
+            )
             DataImplement.instance.addOrUpdateItem(counter)
             activity?.onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
 
     companion object {
-        fun newInstance() = CounterFragment()
+        private const val ID_KEY = "id_key"
+        fun newInstance(id: String? = null) = CounterFragment().apply {
+            arguments = Bundle().apply {
+                putString(ID_KEY, id)
+            }
+        }
+
+        /**
+         * optine 2
+         */
+//        fun newInstance(id: String? = null): CounterFragment {
+//            val fragment = CounterFragment()
+//            val bundle = Bundle()
+//            bundle.putString(ID_KEY, id)
+//            fragment.arguments = bundle
+//            return fragment
+//        }
     }
 }

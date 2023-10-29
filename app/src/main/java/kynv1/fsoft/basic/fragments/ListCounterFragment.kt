@@ -31,10 +31,7 @@ class ListCounterFragment : Fragment() {
         }
     }
     private val onItemClick:(id:String)->Unit = {id->
-        DataImplement.instance.items.firstOrNull{it.id==id}?.let {item->
-            DataImplement.instance.addOrUpdateItem(item.copy(value = item.value+3))
-            adapter.updateList(DataImplement.instance.items)
-        }
+        navigationController?.navigateTo(CounterFragment.newInstance(id))
     }
     private val itemTouchHelper by lazy {
         val simpleItemTouchCallBack =
