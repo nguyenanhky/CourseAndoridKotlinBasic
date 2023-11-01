@@ -8,10 +8,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import kynv1.fsoft.basic.R
 import kynv1.fsoft.basic.databinding.CounterFragmentBinding
 import kynv1.fsoft.basic.model.Counter
 import kynv1.fsoft.basic.model.DataImplement
+import kynv1.fsoft.basic.viewmodel.CounterViewModel
 
 class CounterFragment : Fragment() {
 
@@ -19,8 +21,14 @@ class CounterFragment : Fragment() {
     val binding
         get() = _binding!!
 
-    private var value = 0
-    private var currentCounter: Counter? = null
+    private val viewModel by lazy {
+        ViewModelProvider(this)[CounterViewModel::class.java]
+    }
+
+    private val onDataUpdate: (value: Int) -> Unit = {
+        showData(it)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,7 +36,7 @@ class CounterFragment : Fragment() {
     ): View? {
         _binding = CounterFragmentBinding.inflate(inflater, container, false).also {
             arguments?.getString(ID_KEY)?.let { id ->
-                currentCounter = DataImplement.instance.items.firstOrNull { it.id == id }
+                viewModel.updateCurrentId(id)
             }
         }
         return binding.root
@@ -36,20 +44,17 @@ class CounterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        value = currentCounter?.value ?: 0
-        showData()
+        viewModel.onDataUpdate(onDataUpdate)
         setHasOptionsMenu(true)
         binding.plus1.setOnClickListener {
-            value++
-            showData()
+            viewModel.plusOne(onDataUpdate)
         }
         binding.plus2.setOnClickListener {
-            value += 2
-            showData()
+            viewModel.plusTwo(onDataUpdate)
         }
     }
 
-    private fun showData() {
+    private fun showData(value: Int) {
         binding.textView.text = "$value"
     }
 
@@ -60,11 +65,11 @@ class CounterFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.actionSave) {
-            val counter = currentCounter?.copy(value = value) ?: Counter(
-                value = value,
-                dateInMillis = System.currentTimeMillis()
-            )
-            DataImplement.instance.addOrUpdateItem(counter)
+            viewModel.saveOrUpdate {
+                if(it){
+                    activity?.onBackPressed()
+                }
+            }
             activity?.onBackPressed()
         }
         return super.onOptionsItemSelected(item)
