@@ -8,7 +8,6 @@ import kynv1.fsoft.basic.model.DataInterface
 
 class CounterViewModel(private val dataModel: DataInterface) : ViewModel() {
     var currentCounter: Counter? = null
-        private set
     private var value = 0
 
     fun onDataUpdate(dataUpdate: (value: Int) -> Unit) = dataUpdate(value)
