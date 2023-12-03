@@ -14,6 +14,7 @@ import kynv1.fsoft.basic.databinding.CounterFragmentBinding
 import kynv1.fsoft.basic.model.Counter
 import kynv1.fsoft.basic.model.DataImplement
 import kynv1.fsoft.basic.viewmodel.CounterViewModel
+import kynv1.fsoft.basic.viewmodel.createViewModel
 
 class CounterFragment : Fragment() {
 
@@ -22,7 +23,9 @@ class CounterFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel by lazy {
-        ViewModelProvider(this)[CounterViewModel::class.java]
+        createViewModel(this) {
+            CounterViewModel(DataImplement.instance)
+        }
     }
 
     private val onDataUpdate: (value: Int) -> Unit = {

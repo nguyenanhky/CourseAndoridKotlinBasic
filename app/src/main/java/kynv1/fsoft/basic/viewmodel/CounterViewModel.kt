@@ -3,9 +3,10 @@ package kynv1.fsoft.basic.viewmodel
 import androidx.lifecycle.ViewModel
 import kynv1.fsoft.basic.model.Counter
 import kynv1.fsoft.basic.model.DataImplement
+import kynv1.fsoft.basic.model.DataInterface
 
 
-class CounterViewModel : ViewModel() {
+class CounterViewModel(private val dataModel: DataInterface) : ViewModel() {
     var currentCounter: Counter? = null
         private set
     private var value = 0
@@ -13,7 +14,7 @@ class CounterViewModel : ViewModel() {
     fun onDataUpdate(dataUpdate: (value: Int) -> Unit) = dataUpdate(value)
 
     fun updateCurrentId(id: String?) {
-        currentCounter = DataImplement.instance.items.firstOrNull { it.id == id }
+        currentCounter =dataModel.items.firstOrNull { it.id == id }
         value = currentCounter?.value ?: 0
     }
 
@@ -32,7 +33,7 @@ class CounterViewModel : ViewModel() {
             value = value,
             dateInMillis = System.currentTimeMillis()
         )
-        DataImplement.instance.addOrUpdateItem(counter)
+        dataModel.addOrUpdateItem(counter)
         callback(true)
     }
 
