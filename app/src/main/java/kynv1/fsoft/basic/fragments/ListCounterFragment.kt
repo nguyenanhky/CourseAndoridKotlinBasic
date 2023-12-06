@@ -15,12 +15,19 @@ import kynv1.fsoft.basic.NavigationInterface
 import kynv1.fsoft.basic.databinding.CountersFragmentBinding
 import kynv1.fsoft.basic.model.DataImplement
 import kynv1.fsoft.basic.utils.Logger
+import kynv1.fsoft.basic.viewmodel.CountersViewModel
+import kynv1.fsoft.basic.viewmodel.createViewModel
 
 class ListCounterFragment : Fragment() {
     private var _binding: CountersFragmentBinding? = null
     val binding
         get() = _binding!!
 
+    private val viewModel by lazy {
+        createViewModel {
+            CountersViewModel(DataImplement.instance)
+        }
+    }
     private val navigationController by lazy {
         requireActivity() as? NavigationInterface
     }
@@ -71,9 +78,10 @@ class ListCounterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recycler.adapter = adapter
-        adapter.updateList(DataImplement.instance.items)
-        DataImplement.instance.neeUpdate =  {
-            adapter.updateList(DataImplement.instance.items)
+        viewModel.observer {
+            if(it){
+                adapter.updateList(DataImplement.instance.items)
+            }
         }
         itemTouchHelper.attachToRecyclerView(binding.recycler)
 

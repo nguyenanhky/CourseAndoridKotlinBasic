@@ -8,10 +8,12 @@ class DataImplement: DataInterface {
         val dataController = DataImplement()
     }
 
-    var neeUpdate: (willUpdate: Boolean) -> Unit = {}
 
     override val items: List<Counter>
         get() = _items
+
+    override var needUpdate: (willUpdate: Boolean) -> Unit = {}
+
 
     override fun removeItem(counter: Counter) {
         _items.removeAll { it.id == counter.id }
@@ -24,7 +26,7 @@ class DataImplement: DataInterface {
         } else {
             _items.add(counter)
         }
-        neeUpdate(true)
+        needUpdate(true)
     }
 
     companion object {
