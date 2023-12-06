@@ -18,9 +18,7 @@ import kynv1.fsoft.basic.viewmodel.createViewModel
 
 class CounterFragment : Fragment() {
 
-    private var _binding: CounterFragmentBinding? = null
-    val binding
-        get() = _binding!!
+    private lateinit var binding: CounterFragmentBinding
 
     private val viewModel by lazy {
         createViewModel(this) {
@@ -28,37 +26,26 @@ class CounterFragment : Fragment() {
         }
     }
 
-    private val onDataUpdate: (value: Int) -> Unit = {
-        showData(it)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        _binding = CounterFragmentBinding.inflate(inflater, container, false).also {
-            arguments?.getString(ID_KEY)?.let { id ->
-                viewModel.updateCurrentId(id)
-            }
-        }
-        return binding.root
-    }
+    ): View = CounterFragmentBinding.inflate(inflater, container, false).apply {
+        binding = this
+        binding.lifecycleOwner = this@CounterFragment
+        binding.viewmodel = viewModel
+    }.root
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.onDataUpdate(onDataUpdate)
-        setHasOptionsMenu(true)
-        binding.plus1.setOnClickListener {
-            viewModel.plusOne(onDataUpdate)
-        }
-        binding.plus2.setOnClickListener {
-            viewModel.plusTwo(onDataUpdate)
-        }
-    }
 
-    private fun showData(value: Int) {
-        binding.textView.text = "$value"
+        arguments?.getString(ID_KEY)?.let { id ->
+            viewModel.updateCurrentId(id)
+        }
+        setHasOptionsMenu(true)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -69,7 +56,7 @@ class CounterFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.actionSave) {
             viewModel.saveOrUpdate {
-                if(it){
+                if (it) {
                     activity?.onBackPressed()
                 }
             }
@@ -78,10 +65,6 @@ class CounterFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
 
     companion object {
         private const val ID_KEY = "id_key"
