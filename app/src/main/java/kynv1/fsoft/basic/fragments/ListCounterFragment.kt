@@ -19,10 +19,8 @@ import kynv1.fsoft.basic.viewmodel.CountersViewModel
 import kynv1.fsoft.basic.viewmodel.createViewModel
 
 class ListCounterFragment : Fragment() {
-    private var _binding: CountersFragmentBinding? = null
-    val binding
-        get() = _binding!!
 
+    private lateinit var binding:CountersFragmentBinding
     private val viewModel by lazy {
         createViewModel {
             CountersViewModel(DataImplement.instance)
@@ -68,15 +66,15 @@ class ListCounterFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        _binding = CountersFragmentBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ): View = CountersFragmentBinding.inflate(inflater,container,false).apply {
+        binding = this
+    }.root
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.viewmodle = viewModel
+        binding.lifecycleOwner = this
         binding.recycler.adapter = adapter
         viewModel.observer {
             if(it){
@@ -88,11 +86,6 @@ class ListCounterFragment : Fragment() {
         binding.newCounter.setOnClickListener {
             navigationController?.navigateTo(CounterFragment.newInstance())
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     companion object {
