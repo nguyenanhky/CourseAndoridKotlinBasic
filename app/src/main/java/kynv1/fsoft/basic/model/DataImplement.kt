@@ -1,7 +1,10 @@
 package kynv1.fsoft.basic.model
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
-class DataImplement: DataInterface {
+
+class DataImplement : DataInterface {
     private val _items = mutableListOf<Counter>()
 
     private object Holder {
@@ -12,7 +15,8 @@ class DataImplement: DataInterface {
     override val items: List<Counter>
         get() = _items
 
-    override var needUpdate: (willUpdate: Boolean) -> Unit = {}
+    private val _needUpdate = MutableLiveData<Boolean>(false)
+    override var needUpdate: LiveData<Boolean> = _needUpdate
 
 
     override fun removeItem(counter: Counter) {
@@ -26,7 +30,7 @@ class DataImplement: DataInterface {
         } else {
             _items.add(counter)
         }
-        needUpdate(true)
+       _needUpdate.value = true
     }
 
     companion object {

@@ -9,7 +9,6 @@ class CountersViewModel(
     val items
         get() = dataInterface.items
 
-    fun observer(callback: (update: Boolean) -> Unit) {
-        dataInterface.needUpdate = callback
-    }
+    val needUpdate  = dataInterface.needUpdate
+
 }

@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.DOWN
 import androidx.recyclerview.widget.ItemTouchHelper.END
@@ -76,11 +78,10 @@ class ListCounterFragment : Fragment() {
         binding.viewmodle = viewModel
         binding.lifecycleOwner = this
         binding.recycler.adapter = adapter
-        viewModel.observer {
-            if(it){
-                adapter.updateList(DataImplement.instance.items)
-            }
-        }
+        viewModel.needUpdate.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(requireContext(),"${it.toString()}",Toast.LENGTH_SHORT).show()
+            adapter.updateList(DataImplement.instance.items)
+        })
         itemTouchHelper.attachToRecyclerView(binding.recycler)
 
         binding.newCounter.setOnClickListener {
